@@ -1,0 +1,9 @@
+INSERT INTO orders.order_entry (reid, orderTag, shadeID, quantity, width, length, measure, `group`, series, fabric, hem, hemColor, hemCaps, controlPosition, controlSystem, controlColorPower, controlController, controlClutchMotor, controlclutchCover, valance, valanceFinish, valanceCaps, valanceReturn, mount, trim, trimColor, pull, pullColor, chainDrop, chainDropLength, liftAssist, ultraLite, springAssist, clutchColor, childSafety, holdDownBrackets, sideChannel, sideChannelMount, sideChannelFinish, rollType) VALUES (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+
+WROSK! ROLLER SHADE 
+
+40 columsn
+
+
+INSERT INTO orders.order_entry (reid, orderTag, shadeID, quantity, width, length, measure, `group`, series, fabric, hem, hemColor, hemCaps, controlPosition, controlSystem, controlColorPower, controlController, controlClutchMotor, controlclutchCover, valance, valanceFinish, valanceCaps, valanceReturn, mount, trim, trimColor, pull, pullColor, chainDrop, chainDropLength, liftAssist, ultraLite, springAssist, clutchColor, childSafety, holdDownBrackets, sideChannel, sideChannelMount, sideChannelFinish, rollType) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
