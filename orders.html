@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Style Template</title>
+
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css">
+<!--R-->
+<!--e-->
+<!--i-->
+<?php
+    session_start();
+
+    include 'include/o_db.php';
+
+    $mysqli = new mysqli($servername, $username, $password, $dbname);
+?>
+
+</head>
+
+<body>
+    
+    <?php
+        if(!isset($_SESSION['discount'])){
+            header("Location: login.php");
+        }
+        include 'sg-header.php';
+    ?>
+
+    <!-- Wrapper -->
+    <div class="wrapper">
+
+        <section class="heading">
+            <h1 id="title">YOUR ORDERS</h1>
+
+            <hr class="splitter">
+
+
+        </section>
+
+        <section id="orders">
+
+
+            <div id='new-orders'>
+                <h2>Start New Order</h2>
+                <form id='sg-new-order' action="include/order_name.php" method="post">
+                    <span>Order Tag: </span>
+                    <input required type="text" name="orderName" placeholder="Order Tag">
+                    <span>P/O #: </span>
+                    <input type="text" name="purchaseOrder" placeholder="Purchase Order">
+                    <button class="sg-login sg-return" type="submit" name="orderNameSave"> New </button>
+                    <!-- <button class="sg-next" type="submit" name="orderNameSave"> Submit </button> -->
+                </form>
+            <hr class="ord-splitter">
+
+            <div class="name-tag">
+                    <p> Current Order Tag: 
+                        <?php
+                        if(isset($_SESSION['orderName'])){
+                            echo($_SESSION['orderName']);
+                        }
+                        ?>
+                        –
+                        P/O #:
+                        <?php
+                        if(isset($_SESSION['purchaseOrder'])){
+                            echo($_SESSION['purchaseOrder']);
+                        }
+                        ?>
+                    </p>
+            </div>
+
+
+
+            </div>
+
+            <div id='previous-order'>
+            
+
+                <div id="order-header">
+                    <div class="shade-left">Order</div>
+                    <div class="shade-right">Functions</div>
+                </div>
+
+            <?php
+            if(isset($_SESSION['discount'])){
+
+                //$orderName = $_SESSION['orderName'];
+                $email = $_SESSION['email'];
+                
+                //$query = ("SELECT distinct orderTag FROM order_entry WHERE email = '$email' order by `date` desc");
+               
+                $query = ("SELECT distinct orderTag, `PO`, submit FROM order_tag WHERE email = '$email' order by `date` desc");
+                
+                $result = $mysqli->query($query);
+
+                while($rows = $result->fetch_assoc())
+                {
+                    //$myorder = "'" .$rows['orderTag'] ."'" ;
+                    $myorder = $rows['orderTag'];
+                    $myPO = $rows['PO'];
+                    $submit = $rows['submit'];
+
+                    //echo($myorder);
+                    //echo('<div onclick="changeOrder(this.id);" id="' .$myorder .'" name="' .$myPO .'">' .$rows['orderTag'] .'</div>');
+                    //echo('<br>');
+                    //echo('<hr class="ord-splitter">');
+            ?>
+
+            <div class="order-line">
+                <div class="shade-left">
+                    <button class="sg-next sg-orange" onclick="changeOrder(this.id, this.name);" id="<?php echo($rows['orderTag']);?>" name="<?php echo($rows['PO']);?>"><?php echo($rows['orderTag']);?></button>
+                </div>
+                <div class="shade-right">
+
+            <?php
+                    if($submit == 1){
+            ?>
+                    <button class="sg-login" onclick="" value="<?php echo($rows['orderTag']);?>">Submitted</button>
+                    
+            <?php   }
+                    else if($submit == 0){
+            ?>
+                    <button class="sg-logout" onclick="sendToSG(this.value);" value="<?php echo($rows['orderTag']);?>">Submit</button>
+            <?php
+                    }
+            ?>
+
+                    &nbsp; 
+                    <button class="sg-logout" onclick="showBox(this.value);" value="<?php echo($rows['orderTag']);?>">Delete</button>
+                    &nbsp; &nbsp; &nbsp; 
+                    <span id="submit_<?php echo($rows['orderTag']);?>"></span>
+
+                </div>
+            </div>
+            
+            <?php
+                }
+            }
+            ?>
+            </div>
+
+        </section>
+
+        <div id='result'>
+
+        </div>
+    </div>
+    <!-- Footer -->
+    <?php
+        include 'sg-footer.php';
+    ?>
+
+    <div id="overlay" style="display: none;" onclick="close_modal();"></div>
+    <div id="modal" style="display: none;">
+            <div class="close-box"> 
+                <button class='btn-reset' onclick="close_modal();"><i class="far fa-times-circle"></i></button>
+            </div>
+            <h2>Are You Sure?</h2>
+        
+           
+            <button class="sg-login" onclick="deleteOrder();" value="<?php echo($rows['orderTag']);?>">DELETE</button>
+            
+            <button class="sg-logout" onclick="close_modal();">CANCEL</button>
+            
+            <hr>
+        
+            
+    </div>
+
+
+</body>
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="reiFunctions.js"></script>
+<script src="rei_animations.js"></script>
+<script src="rei_orders.js"></script>
+
+<!-- <script src="submit.js"></script> -->
+
+</html>

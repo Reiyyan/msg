@@ -1,0 +1,58 @@
+                    <div class="shade-line">
+
+                            <div class="shade-header">
+                                <div class="shade-left">
+                                </div>
+        
+                                <div class="shade-right">
+                                    <div class="shade-name">
+                                            <span>SHADE NAME</span>
+                                    </div>
+                                    
+                                    <div class="shade-ded">
+                                        <button class="btn-reset ded">Duplicate</button>
+                                        <button class="btn-reset ded">Edit</button>
+                                        <button class="btn-reset ded">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <div class="shade-left"> 
+                                <div class="shade-img"> 
+                                    <img class="line-img" src="image/render.jpg">
+                                </div>
+                            </div>
+        
+                            <div class="shade-right"> 
+        
+                                <div class="shade-labels">
+                                        <p>Quantity</p>
+                                        <hr class="cart-splitter">
+                                        <p>Product</p>
+                                        <p>Details</p>
+                                        <p>Fabric</p>
+                                        <p>Bottom Bar</p>
+                                        <p>Drive</p>
+                                        <p>Valance</p>
+                                        <p>Mount</p>                         
+                                </div>
+                                
+                                <div class="shade-details">
+                                        <p>1</p>
+                                        <hr class="cart-splitter">
+                                        <p>Roller Shade</p>
+                                        <p>Living Rm #8, 1, 68", 94", Tight</p>
+                                        <p>Satin Opaque-Navy-110</p>
+                                        <p>Front Wrapped Accubar, Black, Black</p>
+                                        <p>Left, Motor, Low Voltage, Wireless, Sonesse 30 RTS (2 Nm) - [SMB1]</p>
+                                        <p>4" Fascia, Black, Black</p>
+                                        <p>Wall</p>
+                                </div>
+                                
+                                <div class="shade-price">
+                                    <p>$250.00</p> 
+                                    <hr class="cart-splitter-2">
+                                </div>
+                            </div>
+                        </div>
+               

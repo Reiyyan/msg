@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Style Template</title>
+
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css">
+<!--R-->
+<!--e-->
+<!--i-->
+<?php
+    session_start();
+
+    include 'config.php';
+
+    $mysqli = new mysqli($servername, $username, $password, $dbname);
+
+?>
+
+</head>
+
+<body>
+
+    <?php
+    if(!isset($_SESSION['discount'])){
+        header("Location: login.php");
+    }
+    include 'sg-header.php';
+    ?>
+        
+
+    <!-- Wrapper -->
+    <div class="wrapper">
+
+        <section class="heading">
+            <h1 id="title">ILLUSION SHADE</h1>
+            <h3 class="sub-title">CUSTOMIZE YOUR ILLUSION SHADES IN A FEW SIMPLE STEPS</h3>
+
+            <p class="title-tag"> Order Tag: 
+                <?php
+                if(isset($_SESSION['orderName'])){
+                    echo($_SESSION['orderName']);
+                }
+                ?>
+                –
+                P/O #:
+                <?php
+                if(isset($_SESSION['purchaseOrder'])){
+                    echo($_SESSION['purchaseOrder']);
+                }
+                ?>
+            </p>
+        </section>
+
+        <!-- Web App -->
+        <section class="sg-flex">
+
+            <!-- Renderings -->
+            <div class="rendertool">
+                <!-- <div class="render-wrapper"> -->
+                <img class="holder" src="image/placeholder/big/illusion.jpg">
+                <!-- </div> -->
+            </div>
+
+            <!-- Order Form -->
+            <div class="sg-form">
+                <!-- DYNAMIC AREA BEGINS HERE -->
+                <!-- Section Titles -->
+
+                
+                <!-- Forms and Labels -->
+                <div id="details_1" class="sg-details">
+                    
+                    <div class="sg-title">
+                        <p> 1. Details </p>
+                    </div>
+
+                    <!--  -->
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Shade ID</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input id="room" type="text" name="room" placeholder="Room / Blind Number" maxlength="14" onchange="setDetails();"><br>
+                        <div class="helptext">Unique identifier for your shades.</div>
+                    </div>
+
+                    <!--  -->
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Quantity</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input id="quantity" type="number" min="1" value="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="Room" onchange="setDetails();" ><br>
+                        <div class="helptext">Number of Shades.</div>
+                    </div>
+
+                    <!--  -->
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Width</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input class="inline-input" id="sWidth" type="number" list="width" min="1" step="1" 
+                        onkeypress='return event.charCode >= 48 && event.charCode <= 57' max="250"  onchange="processWidth(); setDetails();"
+                        >                    
+                        <input class="inline-input fraction-input" id="sWFraction" type="text" list="fraction" onchange="processWidth(); setDetails();">
+                            <datalist id="fraction">
+                            <?php
+                                $fractionResult = $mysqli->query("SELECT fraction FROM _fraction;");
+                                
+                                while($rows = $fractionResult->fetch_assoc()){
+                                    $optionName = $rows['fraction'];
+                                    echo "<option value='$optionName'>$optionName</option>"; 
+                                }
+                                ?>
+                            </datalist>
+                        <div class="helptext">Width of Shades, in Inches.</div>
+                    </div>
+
+                    <!--  -->
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Length</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input class="inline-input" id="sLength" type="number" list="length" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' max="250" onchange="processLength(); setDetails();">                    
+                        <input class="inline-input fraction-input" id="sLFraction" type="text" list="fraction" onchange="processLength(); setDetails();">
+                        <datalist id="fraction">
+                        <?php
+                            $fractionResult = $mysqli->query("SELECT fraction FROM _fraction;");
+                            
+                            while($rows = $fractionResult->fetch_assoc()){
+                                $optionName = $rows['fraction'];
+                                echo "<option value='$optionName'>$optionName</option>"; 
+                            }
+                            ?>
+                        </datalist>
+                        <div class="helptext">Length of Shades, in Inches.</div>
+                    </div>
+                    <!--  -->
+                    
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Measure</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="measure" onchange="runMeasure(); setDetails(); unlockone(); unlockFabric();">
+                            <option disabled selected value="N/A">―Select Your Measure―</option>
+                            <?php
+                                $measureResult = $mysqli->query("SELECT measure FROM _measure;");
+                                
+                                while($rows = $measureResult->fetch_assoc()){
+                                    $optionName = $rows['measure'];
+                                    echo "<option value='$optionName'>$optionName</option>"; 
+                                }
+                                ?>
+                        </select>
+                        <div class="helptext">
+                            <p>Tight: 1/8” deducated from Width.</p>
+                            <p>Finish: Entire shade made to given width.</p>
+                            <p>Cloth: Fabric made to given width.</p>
+                        </div>
+                    </div>
+
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Side By Side</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input id="sbs" type="text" name="Side By Side" placeholder=""><br>
+                        <div class="helptext">Enter Shade IDs of shades beside the current shade. Separate IDs by a comma.</div>
+                    </div>
+
+                    <div class="next-div">
+                        <button disabled class="sg-next next_1">NEXT</button>
+                    </div>
+                </div>
+
+                <div id="fabric_2" class="sg-details">
+
+                    <div class="sg-title">
+                            <p> 2. Fabric </p>
+                    </div>
+
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Group</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="fabric_group" onchange="fabricSeriesFilter();">
+                                <option disabled selected value="N/A">―Select Your Group―</option>
+                                <?php
+                                    $result = $mysqli->query("SELECT distinct `group` from _fabric where `group` is not null order by `group` asc;");
+                            
+                                    while($rows = $result->fetch_assoc())
+                                    {
+                                    $optionName = $rows['group'];
+                                    echo "<option value='$optionName'>$optionName</option>"; 
+                                    }
+                                ?>
+                            
+                        </select>
+                        <div class="helptext">
+                            <p><span class="sg-warning">Blackout:</span> Opaque fabrics for room darkening.</p>
+                            <p><span class="sg-warning">Privacy:</span> Provide privacy while considerably blocking the sun.</p>
+                            <p><span class="sg-warning">Sunscreen:</span> Performance fabrics which reduce heat loss and UV damage, allow outward visibility.</p>
+                            <p><span class="sg-warning">Sustainable:</span> Contains no PVC and the fabrics are made of Trevira CS, an inherently fire-retardant fabric.</p>
+                            <p><span class="sg-warning">Translucent:</span> Provide some privacy with diffused sunlight.</p>
+                            <p><span class="sg-warning">Transparent:</span> Full outward visibility and a softened glow of natural light</p>
+                        </div>
+                    </div>
+
+                    <!--  -->
+
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Series</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="fabric_series" onchange="fabricFilter();">
+                                <option disabled selected value="N/A">―Select Your Series―</option>
+                        </select>
+                        <div class="helptext">Pick fabric series.</div>
+                    </div>
+
+                    <!--  -->
+
+                    <div sg-swatch-container>
+                            <br>
+
+                        <span class="details-span">―Select Your Fabric―</span>
+                    
+                        <div id="fabric" disabled onchange="runFabric(); unlocktwo(); unlockHem();">
+                        </div>
+
+                    </div>
+
+            <br>                    
+                    
+                    <!-- <div id="railroad_div">
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <label for="railroad">Show Railroad Options?</label>
+                        <input type="checkbox" id="railroad" value="Railroad" onchange="railroad(this.checked);"/>
+                        <div class="helptext">Rotate fabric 90° to allow for larger widths. N/A in all Fabrics.</div>
+                    </div> -->
+
+
+                    <div class="relative-next-div">
+                        <button disabled class="sg-next next_2">NEXT</button>
+                    </div>
+                </div>
+
+                <div id="hem_3" class="sg-details">
+
+                        <div class="sg-title">
+                                <p> 3. Bottom Bar </p>
+                        </div>
+    
+                        <!-- <span class="details-span">Hem</span> -->
+                        <!-- <select id="hem" onchange="runHem();">
+                            <option disabled selected value="N/A">―Select Your Hem―</option>
+                            <?php 
+                            
+                            $hTypeResult = $mysqli->query("SELECT distinct hem_type FROM _hem_type where hem_type != 'Interlude' AND hem_type != 'Illusion';");
+                            
+                            while($rows = $hTypeResult->fetch_assoc())
+                            {
+                            $optionName = $rows['hem_type'];
+                            echo "<option value='$optionName'>$optionName</option>"; 
+                            }
+                            
+                            ?>
+                        </select> -->
+
+                        <span class="details-span">―Select Your Hem―</span>
+
+                        <div sg-swatch-container>
+                                <br>
+    
+                        
+                            <div id="hem" disabled onchange="runHem(); setBottomBar();">
+                                   
+                                    <?php 
+                            
+                                    $hTypeResult = $mysqli->query("SELECT distinct hem_type, image  FROM _hem_type where hem_type = 'Illusion';");
+                                    
+                                    while($rows = $hTypeResult->fetch_assoc())
+                                    {
+                                
+                                    $hemName = $rows['hem_type'];
+                                    $hemImage = $rows['image'];
+                                
+                                    echo("
+                                        <div class='sg-box hem-box'>
+                                            <div>
+                                            <label for='$hemName'> 
+                                                <img class='sg-box-image' src='$hemImage' alt='$hemName'>
+                                            </label>
+                                            <label class='sg-swatch-label'>
+                                                    <input type='radio' class='hemRadio' name='hem' onclick='getHem(this.value)' id='$hemName' value='$hemName'>
+                                                    <span class='check-text'>$hemName</span>                                
+                                                    <span class='sg-check'></span>
+                                            </label>
+                                            </div>
+                                        </div>
+                                    ");
+                                    
+                                    }
+                                    
+                                ?>
+
+
+
+
+                            </div>
+    
+                        </div>
+
+                        <div class="sg-d-wrapper">
+                            <span class="details-span">Finishes</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <select id="hem_finish" onchange="cloneValue('hem', 'hem_finish', 'hem_caps'); setBottomBar(); unlockthree(); unlockDrive();">
+                                    <option disabled selected value="N/A">―Select Your Finish―</option>
+                            </select>
+                            <div class="helptext">Color and style of bar.</div>
+                        </div>
+                        
+                        <div id="hem_caps_div">
+                            <div class="sg-d-wrapper">
+                                <span class="details-span">End Caps</span>
+                                <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                                <select id="hem_caps" onchange="setBottomBar();">
+                                        <option disabled selected value="N/A">―Select Your Color―</option>
+                                </select>
+                                <div class="helptext">Color of caps for bottom bar.</div>
+                            </div>
+                        </div>
+                        
+                        <div id="stitched_box" class="sg-d-wrapper">
+                            <span> Stitched: </span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <input id="stitched" type="checkbox"> 
+                            <div class="helptext">Stitch the sides to seal the hem.</div>
+                            </span>
+                        </div>
+
+                        
+                    <div class="relative-next-div">
+                        <button disabled class="sg-next next_3">NEXT</button>
+                    </div>
+                </div>
+
+                <div id="drive_4" class="sg-details">
+                    <div class="sg-title">
+                            <p> 4. Drive </p>
+                    </div>
+
+                    <span class="details-span">―Select Your Drive―</span>
+                    <br>
+
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Position</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="control_position" onchange="setDrive();">
+                            <option disabled selected value="N/A">―Select Your Drive―</option>
+                            <option value='Left'>Left</option>
+                            <option value='Right'>Right</option>
+                        </select>
+                        <div class="helptext">The side that operates your shade.</div>
+                    </div>
+
+                    
+                    <div class="sg-d-wrapper">
+                        <span class="details-span">Systems</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="control_system" name="control_system" onchange="runDriveSystem(); setDrive(); driveUnlocks();">
+                        <option selected disabled value="N/A">―Select Your System Type―</option>
+                        </select>
+                        <div class="helptext">
+                            <p>Chain: Operated using a manual clutch and chain system.</p>
+                            <p>Cord: Operated using a manual clutch and cord system.</p>
+                            <p>Motor: Operated automatically through remotes or home automation.</p>
+                        </div>    
+                    </div>
+                    
+
+                    <div id="drive_optional_div">
+
+                        <div id="drive_power_div">
+                            <div class="sg-d-wrapper">
+                                <span id="color_power">Color</span> 
+                                <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                                <select id="control_power" onchange="control_OptionsFilter(); setDrive(); driveUnlocks();">
+                                    <option selected disabled value="N/A">―Select Your Color―</option>
+                                </select>
+                                <div id='cp_text' class="helptext">
+                                    <p>Color: Color of chain.</p>
+                                    <p>Rechargeable Battery: Recharge ~3 months.</p>
+                                    <p>Reloadable Battery: Runs on 10 x AA batteries.</p>
+                                    <p>Low Voltage: Runs on DC current.</p>
+                                    <p>Line Voltage: Runs on AC current.</p>
+                                </div>
+                            </div>
+
+                        </div>   
+                    
+                        <div id="drive_control_div" style='display: none;'>
+                            <div class="sg-d-wrapper">
+                                <span class="details-span">Controller</span>
+                                <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                                <select id="control_controller" onchange="motorClutchFilter(); setDrive();" >
+                                    <option selected disabled value="N/A">―Select Your Control―</option>
+                                </select>
+                                <div id='cont_text' class="helptext">
+                                    <p>R-Series: Sunglow default clutch.</p>
+                                    <p>Skyline: Spring loaded end plugs.</p>
+                                    <p>Wireless: Handheld remotes/wireless switches.</p>
+                                    <p>Wired: Wired wall switches.</p>
+                                    <p>Network: Smart home integration.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="drive_final_div" style="display: none;">
+                            <div class="sg-d-wrapper">
+                                <span id="mc_Label">Clutch</span>
+                                <span class="tooltip"><i class="far fa-question-circle"></i></span>                                
+                                <select id="motor_clutch" onchange="runDriveFinal(); setDrive(); driveUnlocks();">
+                                <option selected disabled value="N/A">―Select Your Clutch―</option>
+                                </select>
+                                <div class="helptext">
+                                    <p>Motors and Clutches Help LINK</p>                                
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id='motor-guide' class="sg-d-wrapper" style="display: none;">
+                            <p>You may need to select additional components for your selected Motor. <a href="addons.php?tab=true" target="_blank"><span class='sg-orange-text' onclick='addFromText();'>Click Here</span></a> to select your add ons. (Your progress for this blind will not be lost.)</p>
+                        </div>
+
+                        <div id="clutch_bracket_div" class="sg-d-wrapper" style="display:none;">
+                            <span class="details-span">Bracket Cover</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <input type="checkbox" id="c_bracket" onchange="bracketColor(); setDrive();"> 
+                            <span id="bracket_span">
+                                    <select style="display:none;" id="clutch_bracket_color">
+                                        <option selected disabled value="N/A">―Select Your Color―</option>
+                                        <option value="White">White</option>
+                                        <option value="Black">Black</option>
+                                    </select>
+                            </span>
+                            <div class="helptext">Covers for clutches</div>
+                         </div>
+                    </div>
+
+                    <span id="override_div">
+                    <div>
+                            <span>Override Sunglow Clutch?</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <input id="adv_check" type="checkbox" onchange="clutchOverride();">
+                            <div class="helptext sg-topright">Override recommended settings? <span class="sg-warning">Advanced users only.</span></div>
+                    </div>
+                    </span>
+
+
+                    <div class="next-div">
+                        <button disabled class="sg-next next_4">NEXT</button>
+                    </div>
+
+                </div>
+
+                <div id="valance_5" class="sg-details">
+                    <div class="sg-title">
+                            <p> 5. Valance </p>
+                    </div>
+                    
+                    <span class="details-span">―Select Your Valance―</span>
+                        <div id="valance_type" onchange="runValance(); setValance(); unlockATC();">
+                        <!-- <option disabled selected value="N/A">―Select Your Valance―</option> -->
+                        
+                    </div>               
+                    
+                    <div id="valance_finish_section" class="sg-d-wrapper" onchange="cloneValue('val', 'valance_finish', 'val_cap'); setValance(); unlockfive(); unlockMount();">      
+                        <span class="details-span">Finishes</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="valance_finish" onchange="">
+                                <option disabled selected value="N/A">―Select Your Finish―</option>
+                        </select>
+                        <div class="helptext">
+                            <p>Headrail Color.</p>
+                        </div>
+                    </div>
+
+                    <div id="valance_caps_span" class="sg-d-wrapper">
+                        <span class="details-span">End Caps</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <select id="val_cap" onchange="setValance();">
+                                <option disabled selected value="N/A">―Select Your Finish―</option>
+                        </select>
+                        <div class="helptext">
+                                <p>Color of caps for headrail.</p>
+                        </div>
+                    </div>
+
+                    <div id="valance_return_section" class="sg-d-wrapper" style="display:none;">
+                        
+                        <span class="details-span">Return</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <input id="return_value" type="number" min="0" value="3.5" onchange="setValance();">
+                        <div class="helptext">
+                                <p>Length of return, inches.</p>
+                        </div>
+                    </div>
+
+                    <div id="valance_bracket_span" class="sg-d-wrapper">
+                            <span class="details-span">Bracket Covers</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <input type="checkbox" id="valance_bracket" onchange="setValance();">
+                            <div class="helptext">
+                                    <p>Plastic bracket cover.</p>
+                            </div>
+                    </div>
+                    
+                    <div class="relative-next-div">
+                        <button disabled class="sg-next next_5">NEXT</button>
+                    </div>
+                </div>
+
+                <div id="mount_6" class="sg-details">
+                    <div class="sg-title">
+                            <p> 6. Mounting </p>
+                    </div>
+
+                    <!-- TO DO FIX -->
+                    <div id="mounting" class="sg-d-wrapper">
+
+                        <span class="details-span">Mounting Technqiue</span>
+                        <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                        <br>
+
+                        <br>
+
+                        <span>Ceiling</span> 
+                        <input type="radio" name="mount" id="c_mount" value="Ceiling" onclick="getMount(this.value)" onchange="setMount(); unlocksix(); unlockAdv();">                           
+                        <br>
+                    
+                        <span>Wall </span>
+                        <input type="radio" name="mount" id="w_mount" value="Wall" onclick="getMount(this.value)" onchange="setMount();  unlocksix(); unlockAdv();">     
+                        <br>
+
+                        <span>Lateral </span>
+                        <input type="radio" name="mount" id="l_mount" value="Lateral" onclick="getMount(this.value)" onchange="setMount(); unlocksix(); unlockAdv();">  
+                        <div class="helptext">
+                            <p>Ceiling: Mount into the surface above the shade.</p>
+                            <p>Wall: Mount on to the surface behind the shade.</p>
+                            <p>Lateral: Mount into the surfaces on each side of the shade. Light gap will increase on cassette systems that are laterally mounted.</p>
+                        </div>    
+
+                    </div>
+               
+                    <div class="next-div">
+                        <button disabled class="sg-next next_6">NEXT</button>
+                    </div>
+                </div>
+
+                <div id="sg_adv_7" class="sg-details">
+                    
+                    <div class="sg-title">
+                        <p> 7. Advanced Options </p>
+                    </div>
+  
+                    <div id="chain_drop_div">
+                        <div class="sg-d-wrapper">
+                            <span class="c_drop-span">Chain Drop</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <select id="chain_length" onchange="chainDrop();">
+                                <!-- <option disabled value="N/A">―Select Your Drop―</option> -->
+                                <option selected value="Standard">Standard</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                            <span id="custom_drop" style="display:none;">
+                                <input id="drop" type="number" min="8"> Inches
+                            </span>
+                            <div class="helptext">
+                                    <p>Standard: Length - 10".</p>
+                            </div>
+                        </div>
+                        <hr class="adv-splitter">
+                    </div>
+
+
+                    <div id="child_safety">
+                        <div class="sg-d-wrapper">
+                            <span class="details-span">Child Safety</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <div>
+                            <br>           
+                            <span>P-Clip <input type="radio" name="Safety" value="P-Clip" checked="checked" onclick="getSafety(this.value); setAdvanced();"></span>
+                            <br>
+                            <span>Safety Hold Down <input type="radio" name="Safety" value="Safety Hold Down" onclick="getSafety(this.value); setAdvanced();"></span>
+                            </div>
+                            <span id='no-cs' >None (Commerical Only) <input type="radio" name="Safety" value="Safety Hold Down" onclick="getSafety(this.value); setAdvanced();"></span>
+                            <div class="helptext">
+                                    <p>Chain tension device. Required for residential usage.</p>
+                            </div>
+                        </div>
+                        <hr class="adv-splitter">
+                    </div>
+
+                    <div id="hold_down">
+                        <div class="sg-d-wrapper">
+                                <span> Hold Down Brackets</span>
+                                <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                                <input id="hold" type="checkbox">
+                                <div class="helptext">
+                                        <p>Hold down the bottom bar to secure your shade to a door.</p>
+                                </div>
+                        </div>
+                        <hr class="adv-splitter">
+                    </div>
+
+                    <div id="sc_div">
+
+                        <div class="sg-d-wrapper">
+                            <span class="details-span">Side Channels</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <select id="side_channels" onchange="sideChannels(); getPrice();">
+                                <option disabled selected value="N/A">―Select Side Channels―</option>
+                                <option value="Side Channels">Side Channels</option>
+                                <option value="Side & Bottom Channels">Side & Bottom Channels</option>
+                                <option value="None">None</option>
+                            </select>
+                            <div class="helptext">
+                                    <p>Helps eliminate light seepage.</p>
+                            </div>
+                        </div>
+                        
+                        <span id="sc_options">
+
+                        <div class="sg-d-wrapper">
+                            <div id="sc_mount" class="interal-spacer">
+                                    <span class="details-span">Mount</span>
+                                    <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                                    <br>
+                                    <span>Lateral <input type="radio" name="sc_mount" value="lateral"></span>
+                                    <span>Face <input type="radio" name="sc_mount" value="face"></span>
+                                    <div class="helptext">
+                                        <p>Face: Mount on to the surface behind the shade.</p>
+                                        <p>Lateral: Mount into the surfaces on each side of the shade.</p>
+                                    </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sg-d-wrapper">
+                            <span class="details-span">Finish</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <select id="sc_finish">
+                                <option disabled selected value="N/A">―Select Your Side Finish―</option>
+                                <option value="White">White</option>
+                                <option value="Anodized">Anodized</option>
+                                <option value="Dark Bronze">Dark Bronze</option>
+                                <option value="Black">Black</option>
+                            </select>
+                            <div class="helptext">
+                                    <p>Colors of Side Channels.</p>
+                            </div>
+                        </div>
+
+                        </span>
+
+                        <hr class="adv-splitter">
+
+                    </div>
+
+                    <div id="roll_type">
+                    
+                        <div class="sg-d-wrapper">
+                            <span class="details-span">Roll Type</span>
+                            <span class="tooltip"><i class="far fa-question-circle"></i></span>
+                            <div class="helptext">
+                                    <p>Regular: Fabric drops at the back.</p>
+                                    <p>Reverse: Fabric drops at the front.</p>
+                            </div>
+                        </div>
+<br>
+
+
+                        <div class="sg-box roll_box">
+                                <label for="Regular"> 
+                                    <img class="sg-box-image" src="image/diagram/valance/openroll.png" alt="Regular Roll">
+                                </label>
+                                <label class="sg-swatch-label">
+                                        <input type="radio" class="rollRadio" name="roll_type" onclick="getRoll(this.value)" id="Regular" value="Regular" checked>
+                                        <span class="check-text">Regular</span>                                
+                                        <span class="sg-check"></span>
+                                </label>
+                        </div>
+
+                        <div class="sg-box roll_box">
+                                <label for="Reverse"> 
+                                    <img class="sg-box-image" src="image/diagram/valance/openroll_reverse.png" alt="Reverse Roll">
+                                </label>
+                                <label class="sg-swatch-label">
+                                        <input type="radio" class="rollRadio" name="roll_type" onclick="getRoll(this.value)" id="Reverse" value="Reverse">
+                                        <span class="check-text">Reverse</span>                                
+                                        <span class="sg-check"></span>
+                                </label>
+                        </div>
+                        
+                        <!-- 
+                            <select id="roll">
+                                    <option disabled value="N/A">―Select Your Roll Type</option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Reverse">Reverse</option>
+                            </select> -->
+                        <hr class="adv-splitter">
+
+                    </div>
+
+                    <div class="relative-next-div">
+                        <button disabled class="sg-next sg-finish" onclick="addToCart();">Finish</button>
+                        <br>
+                        <br>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Summary -->
+            <div class="sg-summary">
+                <h2>Blind<br>Summary</h2>
+                <!-- Details Section -->
+                <button class="summary-reset summary-box detail-draw">
+                    <div class="summary-active summary-label"> 
+                        <span class="big-label">1</span>
+                        <span class="small-label">Details</span>
+                    </div>
+                    <div id="detail-summary" class="summary-data">  </div>
+                </button>
+            
+                <!-- Fabric Section -->
+                <button disabled class="summary-reset summary-box fabric-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">2</span>
+                            <span class="small-label">Fabric</span>
+                        </div>
+                        <div id="fabric-summary" class="summary-data">  </div>
+                </button>
+            
+                <!-- Hem Section -->
+                <button disabled class="summary-reset summary-box hem-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">3</span>
+                            <span class="small-label">Bottom Bar</span>
+                        </div>
+                        <div id="hem-summary" class="summary-data">  </div>
+                </button>
+            
+                <!-- Control Section -->
+                <button disabled class="summary-reset summary-box drive-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">4</span>
+                            <span class="small-label">Drive</span>
+                        </div>
+                        <div id="drive-summary"class="summary-data">  </div>
+                </button>
+            
+                <!-- Valance Section -->
+                <button disabled class="summary-reset summary-box valance-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">5</span>
+                            <span class="small-label">Valance</span>
+                        </div>
+                        <div id="valance-summary" class="summary-data">  </div>
+                </button>
+            
+                <!-- Mount Section -->
+                <button disabled class="summary-reset summary-box mount-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">6</span>
+                            <span class="small-label">Mounting</span>
+                        </div>
+                        <div id="mount-summary" class="summary-data">  </div>
+                </button>
+            
+                <!-- Advanced Section -->
+                <button disabled class="summary-reset summary-box adv-draw">
+                        <div class="summary-label"> 
+                            <span class="big-label">7</span>
+                            <span class="small-label">Advanced</span>
+                        </div>
+                        <div id="adv-summary" class="summary-data"></div>
+                </button>
+            
+            <hr>
+            
+                    <!-- Price Button Container -->
+                    <?php
+                        include 'price-button.php';
+                    ?>
+
+            </div>
+        
+        </section>
+
+    </div>
+
+    <!-- Overlay shade -->
+
+    <?php
+        include 'sg-overlay.php';
+    ?>
+        
+    <!-- Footer -->
+
+    <?php
+        include 'sg-footer.php';
+    ?>
+
+</body>
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="reiFunctions.js"></script>
+<script src="rei_animations.js"></script>
+<script src="rei_edit.js"></script>
+
+</html>

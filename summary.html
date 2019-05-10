@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Style Template</title>
+
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css">
+<!--R-->
+<!--e-->
+<!--i-->
+<?php
+    session_start();
+    $discount = $_SESSION['discount'];
+    $role = $_SESSION['role'];
+    $hide = $_SESSION['hide'];
+    include 'include/o_db.php';
+
+    $mysqli = new mysqli($servername, $username, $password, $dbname);
+
+?>
+
+</head>
+
+<body>
+    
+    <?php
+    if(!isset($_SESSION['discount'])){
+        header("Location: login.php");
+    }
+    include 'sg-header.php';
+    ?>
+        
+
+    <!-- Wrapper -->
+    <div class="wrapper">
+
+        <section class="heading">
+            <h1 id="title">ORDER SUMMARY</h1>
+
+            <hr class="splitter">
+
+        <div class="name-tag">
+        <?php
+        if(isset($_SESSION['orderName'])){
+        ?>
+        <p> Order Tag: 
+            <?php
+            echo($_SESSION['orderName']);
+            ?>
+            –
+            P/O #:
+            <?php
+            if(isset($_SESSION['purchaseOrder'])){
+                echo($_SESSION['purchaseOrder']);
+            }
+            ?>
+        </p>
+        <?php
+        }
+        ?>
+        <!-- <input type="text" placeholder="Tag/Name"> -->
+        </div>
+        </section>
+
+        <section>
+            <!-- Listings -->
+            <div id="DynamicIDHere">
+
+                <?php
+
+                if((isset($_SESSION['orderName'])) && isset($_SESSION['discount'])){
+
+                    $orderName = $_SESSION['orderName'];
+
+                    $query = ("SELECT submit FROM order_tag where orderTag = '$orderName';");
+                    $result = $mysqli->query($query);
+                    while($rows = $result->fetch_assoc())
+                    {
+                        $submit = $rows['submit'];
+                    }
+
+
+                    $query = ("SELECT * FROM order_entry WHERE orderTag = '$orderName' order by `date` asc");
+                    
+                    $result = $mysqli->query($query);
+
+                    while($rows = $result->fetch_assoc())
+                    {
+                        $shade = $rows['shade'];
+                        $product = $rows['product'];
+                        $price = $rows['price'];
+                        $code = $rows['code'];
+                        
+                        $reid = $rows['reid'];
+                        $orderTag = $rows['orderTag'];
+
+                        $shadeID = $rows['shadeID'];
+                        $quantity = $rows['quantity'];
+                        $width = $rows['width'];
+                        $length = $rows['length'];
+                        $measure = $rows['measure'];
+                        $sbs = $rows['sideBySide'];
+                        $group = $rows['group'];
+                        $series = $rows['series'];
+                        $fabric = $rows['fabric'];
+                        $hem = $rows['hem'];
+                        $hemColor = $rows['hemColor'];
+                        $hemCaps = $rows['hemCaps'];
+                        $controlPosition = $rows['controlPosition'];
+                        $controlSystem = $rows['controlSystem'];
+                        $controlColorPower = $rows['controlColorPower'];
+                        $controlController = $rows['controlController'];
+                        $controlClutchMotor = $rows['controlClutchMotor'];
+                        $controlclutchCover = $rows['controlclutchCover'];
+                        $valance = $rows['valance'];
+                        $valanceFinish = $rows['valanceFinish'];
+                        $valanceCaps = $rows['valanceCaps'];
+                        $valanceReturn = $rows['valanceReturn'];
+                        $mount = $rows['mount'];
+                        $trim = $rows['trim'];
+                        $trimColor = $rows['trimColor'];
+                        $pull = $rows['pull'];
+                        $pullColor = $rows['pullColor'];
+                        $chainDrop = $rows['chainDrop'];
+                        $chainDropLength = $rows['chainDropLength'];
+                        $liftAssist = $rows['liftAssist'];
+                        $ultraLite = $rows['ultraLite'];
+                        $springAssist = $rows['springAssist'];
+                        $clutchColor = $rows['clutchColor'];
+                        $childSafety = $rows['childSafety'];
+                        $holdDownBrackets = $rows['holdDownBrackets'];
+                        $sideChannel = $rows['sideChannel'];
+                        $sideChannelMount = $rows['sideChannelMount'];
+                        $sideChannelFinish = $rows['sideChannelFinish'];
+                        $rollType = $rows['rollType'];
+
+                        //back
+                        $back_group = $rows['backGroup'];
+                        $back_series = $rows['backSeries'];
+                        $back_fabric = $rows['backFabric'];
+                        $back_hem = $rows['backHem'];
+                        $back_hemColor = $rows['backhemFinish'];
+                        $back_hemCaps = $rows['backHemCaps'];
+                        $back_controlPosition = $rows['backCPosition'];
+                        $back_controlSystem = $rows['backCSystem'];
+                        $back_controlColorPower = $rows['backCColorPower'];
+                        $back_controlController = $rows['backCController'];
+                        $back_controlClutchMotor = $rows['backCClutchMotor'];
+
+                        if($product){
+                            $lower = strtolower($code);
+                            $img = "image/addons/{$lower}.jpg";
+
+                            echo ('<div class="shade-line">
+
+                                    <div class="shade-header">
+                                        <div class="shade-left">
+                                            <span class="line_item"> </span>
+                                        </div>
+                
+                                        <div class="shade-right">
+                                            <div class="shade-name">');
+                                                    echo('<span>' .$shadeID .'</span>');
+                                        echo('</div>');
+                                            
+                                        if($submit == 0){
+                                    echo('<div class="shade-ded">');
+                                                echo('<button class="btn-reset ded" onclick="delete_shade(this.value);" value=' .$reid .'>Delete</button>
+                                            </div>');
+                                        }
+                                    echo('</div>
+                                    </div>
+                
+                                    <div class="shade-left"> 
+                                        <div class="shade-img"> 
+                                            <img class="line-img" src=') .$img .('>
+                                        </div>
+                                    </div>
+                
+                                    <div class="shade-right"> 
+                
+                                        <div class="shade-labels">
+                                                <p>Quantity</p>
+                                                <hr class="cart-splitter">
+                                                <p>Product</p>                  
+                                        </div>
+                                        
+                                        <div class="shade-details">');
+                                            echo('<p>'.$quantity .'</p>
+                                                <hr class="cart-splitter">');
+                                                echo('<p>'.$product .'</p>');
+                                                
+                                                echo('
+                                        </div>
+                                        
+                                        <div class="shade-price">');
+                                    echo('<p>');
+                                            if($role == 'Manager' && $hide == 'false'){
+                                            echo('<p>
+                                                    Dealer Price: <span class="disc-price">$' .(number_format(((100 - $discount)  * $price /100),2)) .'</span> – ');
+                                            }
+                                    echo('MSRP: <span class="item-price">$' .$price .'</span></p> 
+                                            <hr class="cart-splitter-2">
+                                        </div>
+                                    </div>
+                                </div>');
+                        }
+                        else if($shade == "GEMINI DUAL SHADE"){
+                            echo ('<div class="shade-line">
+    
+                                    <div class="shade-header">
+                                        <div class="shade-left">
+                                            <span class="line_item"> </span>
+                                        </div>
+                
+                                        <div class="shade-right">
+                                            <div class="shade-name">');
+                                                    echo('<span>' .$shadeID .'</span>');
+                                        echo('</div>');
+                                            
+                                        if($submit == 0){
+                                           echo('<div class="shade-ded">');
+                                                echo('<button class="btn-reset ded" onclick="duplicate_shade(this.value);" value=' .$reid .'>Duplicate</button>');
+    
+                                                $myShade = strtolower("'$shade'");
+    
+                                                echo('<button class="btn-reset ded" onclick="edit_shade(this.value,' .$myShade .');" value=' .$reid .'>Edit</button>');
+    
+                                                echo('<button class="btn-reset ded" onclick="delete_shade(this.value);" value=' .$reid .'>Delete</button>
+                                            </div>');
+                                        }
+
+                                        echo('</div>
+                                    </div>
+                
+                                    <div class="shade-left"> 
+                                        <div class="shade-img"> 
+                                            <img class="line-img" src="image/placeholder/gemini.jpg">
+                                        </div>
+                                    </div>
+                
+                                    <div class="shade-right"> 
+                
+                                        <div class="shade-labels">
+                                                <p>Quantity</p>
+                                                <hr class="cart-splitter">
+                                                <p>Product</p>
+                                                <p>Details</p>
+                                                <p>Front Fabric</p>
+                                                <p>Front Bottom Bar</p>
+                                                <p>Front Drive</p>
+                                                <p>Back Fabric</p>
+                                                <p>Back Bottom Bar</p>
+                                                <p>Back Drive</p>
+                                                <p>Valance</p>
+                                                <p>Mount</p>                         
+                                        </div>
+                                        
+                                        <div class="shade-details">');
+                                            echo('<p>'.$quantity .'</p>
+                                                <hr class="cart-splitter">');
+                                                echo('<p>'.$shade .'</p>');
+                                                echo('<p>' .$width .'", '.$length .'", '.$measure .'</p>');
+                                                echo('<p>'.$fabric .'</p>');
+                                                echo('<p>' .$hem .', ' .$hemColor .', ' .$hemCaps .'</p>');
+                                                echo('<p>' .$controlPosition .', '.$controlSystem .', ' .$controlColorPower .', ' .$controlController . ', ' .$controlClutchMotor .'</p>');
+                                                echo('<p>'.$back_fabric .'</p>');
+                                                echo('<p>' .$back_hem .', ' .$back_hemColor .', ' .$back_hemCaps .'</p>');
+                                                echo('<p>' .$back_controlPosition .', '.$back_controlSystem .', ' .$back_controlColorPower .', ' .$back_controlController . ', ' .$back_controlClutchMotor .'</p>');
+                                                echo('<p>' .$valance .', ' .$valanceFinish .', ' .$valanceCaps .'</p>');
+                                                echo('<p>' .$mount .'</p>
+                                        </div>
+                                        
+                                        <div class="shade-price">');
+                                    echo('<p>');
+                                    if($role == 'Manager' && $hide == 'false'){
+                                    echo('<p>
+                                            Dealer Price: <span class="disc-price">$' .(number_format(((100 - $discount)  * $price /100),2)) .'</span> – ');
+                                    }
+                                    echo('MSRP: <span class="item-price">$' .$price .'</span></p> 
+                                            <hr class="cart-splitter-2">
+                                        </div>
+                                    </div>
+                                </div>');
+                            }
+                        else{
+                            //Image Selector
+                            if($shade == 'ROLLER SHADE'){
+                                $img = 'image/placeholder/roller.jpg';
+                            }
+                            else if($shade == 'INTERLUDE SHADE'){
+                                $img = 'image/placeholder/interlude.jpg';
+                            }
+                            else if($shade == 'ILLUSION SHADE'){
+                                $img = 'image/placeholder/illusion.jpg';
+                            }
+                            else if($shade == 'VISION SHADE'){
+                                $img = 'image/placeholder/vision2.jpg';
+                            }
+                            else if($shade == 'PANEL TRACK'){
+                                $img = 'image/placeholder/panel_track.jpg';
+                            }
+                            else if($shade == 'ROMAN SHADE'){
+                                $img = 'image/placeholder/roman.jpg';
+                            }
+                            else if($shade == 'FIXED SHADE'){
+                                $img = 'image/placeholder/fixed.jpg';
+                            }
+                        echo ('<div class="shade-line">
+
+                                <div class="shade-header">
+                                    <div class="shade-left">
+                                        <span class="line_item"> </span>
+                                    </div>
+            
+                                    <div class="shade-right">
+                                        <div class="shade-name">');
+                                                echo('<span>' .$shadeID .'</span>');
+                                    echo('</div>');
+                                        
+                                    if($submit == 0){
+                                    echo('<div class="shade-ded">');
+                                            echo('<button class="btn-reset ded" onclick="duplicate_shade(this.value);" value=' .$reid .'>Duplicate</button>');
+
+                                            $myShade = strtolower("'$shade'");
+
+                                            echo('<button class="btn-reset ded" onclick="edit_shade(this.value,' .$myShade .');" value=' .$reid .'>Edit</button>');
+
+                                            echo('<button class="btn-reset ded" onclick="delete_shade(this.value);" value=' .$reid .'>Delete</button>
+                                        </div>');
+                                    }
+                                    echo('</div>
+                                </div>
+            
+                                <div class="shade-left"> 
+                                    <div class="shade-img"> 
+                                        <img class="line-img" src="') .$img .('">
+                                    </div>
+                                </div>
+            
+                                <div class="shade-right"> 
+            
+                                    <div class="shade-labels">
+                                            <p>Quantity</p>
+                                            <hr class="cart-splitter">
+                                            <p>Product</p>
+                                            <p>Details</p>
+                                            <p>Fabric</p>
+                                            <p>Bottom Bar</p>
+                                            <p>Drive</p>
+                                            <p>Valance</p>
+                                            <p>Mount</p>                         
+                                    </div>
+                                    
+                                    <div class="shade-details">');
+                                        echo('<p>'.$quantity .'</p>
+                                            <hr class="cart-splitter">');
+                                            echo('<p>'.$shade .'</p>');
+                                            echo('<p>' .$width .'", '.$length .'", '.$measure .', '.$sbs .'</p>');
+                                            echo('<p>'.$fabric .'</p>');
+                                            echo('<p>' .$hem .', ' .$hemColor .', ' .$hemCaps .'</p>');
+                                            echo('<p>' .$controlPosition .', '.$controlSystem .', ' .$controlColorPower .', ' .$controlController . ', ' .$controlClutchMotor .'</p>');
+                                            echo('<p>' .$valance .', ' .$valanceFinish .', ' .$valanceCaps .'</p>');
+                                            echo('<p>' .$mount .'</p>
+                                    </div>
+                                    
+                                    <div class="shade-price">');
+                                
+                                echo('<p>');
+                                        if($role == 'Manager' && $hide == 'false'){
+                                        echo('<p>
+                                                Dealer Price: <span class="disc-price">$' .(number_format(((100 - $discount)  * $price /100),2)) .'</span> – ');
+                                        }
+                                echo('MSRP: <span class="item-price">$' .$price .'</span></p> 
+                                        <hr class="cart-splitter-2">
+                                    </div>
+                                </div>
+                            </div>');
+                        }
+                    }
+
+                }?>
+                
+            </div>
+
+            <br>
+            <div class="special-notes">
+                <p>Special Instructions</p>
+                <textarea rows="4" cols="50" name="comment" form="usrform"></textarea>
+            </div>
+            <!-- Totals -->
+
+            <div id='shade-total'>
+
+                    <div class="total-container">
+
+                        <div class="total-buttons">
+                            <button class="add-button blue-btn" onclick="clearOrder();">SAVE & QUIT</button>
+                        </div>
+                        <div class="total-buttons">
+                            <button class="add-button" onclick="sendCurrentToSG();">SUBMIT ORDER</button>
+                        </div>
+                        <div class="total-price">
+                                <p>TOTAL</p>
+                                <span>MSRP: </span><p id="sg-price" class="price"> $ 0.00 </p>
+
+                                <?php
+                                if($role == 'Manager' && $hide == 'false'){
+                                echo('<span>Dealer Price: </span><p id="sg-discounted" class="price"> $ 0.00 </p>');
+                                }
+                                ?>
+                            </div>
+                    </div>
+
+
+            </div>
+        </section>
+
+    </div>
+    <!-- Footer -->
+    <?php
+        include 'sg-footer.php';
+    ?>
+
+<div id="result">
+
+</div>
+
+</body>
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="reiFunctions.js"></script>
+<script src="rei_animations.js"></script>
+<script src="rei_orders.js"></script>
+
+<!-- <script src="submit.js"></script> -->
+
+</html>
